@@ -8,6 +8,8 @@ import FiltersFull from "./FiltersFull";
 import { useEffect } from "react";
 import { setFilters } from "@/state";
 import { cleanParams } from "@/lib/utils";
+import Map from "./Map";
+import Listings from "./Listings";
 
 function SearchPage() {
 
@@ -59,9 +61,9 @@ function SearchPage() {
         <div className={`h-full overflow-auto transition-all duration-300 ease-in-out ${isFilterFullOpen ? "w-3/12 opacity-100 visible" : "w-0 opacity-0 invisible"}`}>
           <FiltersFull />
         </div>
-        {/* <Map /> */}
+        <Map />
         <div className="basis-4/12 overflow-y-auto">
-          {/* <Listings /> */}
+          <Listings />
         </div>
       </div>
     </div>

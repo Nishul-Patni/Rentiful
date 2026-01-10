@@ -33,15 +33,12 @@ export const authMiddleware = (allowedRules: string[]) =>{
         try{
             const decodedToken = jwt.decode(token) as DecodedToken;
             const userRole = decodedToken["custom:role"] || "";
-            console.log(userRole)
-            console.log(decodedToken)
             req.user = {
                 id: decodedToken.sub,
                 role: userRole
             }
 
             const hasAccess = allowedRules.includes(userRole.toLocaleLowerCase());
-            console.log(hasAccess, allowedRules)
             if(!hasAccess){
                 res.status(403).json({message: "Access Denied"});
                 return;
