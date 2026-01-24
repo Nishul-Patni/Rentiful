@@ -3,10 +3,10 @@
 import Card from "@/components/Card";
 import Header from "@/components/Header"
 import Loading from "@/components/Loading";
-import { useGetAuthenticatedUserQuery, useGetPropertiesQuery, useGetTenantQuery } from "@/state/api"
+import { useGetAuthenticatedUserQuery, useGetCurrentResidencesQuery, useGetPropertiesQuery, useGetTenantQuery } from "@/state/api"
 import { Property, Tenant } from "@/types";
 
-function Favorites() {
+function Residences() {
 
   const { data: authUser } = useGetAuthenticatedUserQuery();
   const { data: tenant } = useGetTenantQuery(
@@ -17,35 +17,31 @@ function Favorites() {
   );
 
   const {
-    data: favouriteProperties,
+    data: currentResidences,
     isLoading,
     error,
-  } = useGetPropertiesQuery(
+  } = useGetCurrentResidencesQuery(
+    authUser?.cognitoInfo?.userId || "",
     {
-      favoriteIds: tenant?.favorites?.map((fav: { id: number }) => fav.id),
-    },
-    {
-      skip: !tenant?.favorites || tenant?.favorites.length === 0
+      skip: !authUser?.cognitoInfo?.userId 
     }
   )
 
   if (isLoading) return <Loading />
 
-  if (error) return <div>Error loading Favorites</div>
+  if (error) return <div>Error loading Current Residences</div>
 
   return (
     <div className="dashboard-container">
-      <Header title="Favorited Properteis" subtitle="Browse and Manage Property listings" />
+      <Header title="Currenrt Residences" subtitle="View and Manage your current living spaces" />
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
         {
-          favouriteProperties?.map((property) => {
+          currentResidences?.map((property) => {
             return <Card
               key={property.id}
               property={property}
               isFavorite={
-                tenant?.favorites.some(
-                  (fav: Property) => fav.id === property.id
-                ) || false
+                tenant?.favorites.includes(property.id) || false
               }
               onFavoriteToggle={() => {
                // handleFavoriteToggle(property.id)
@@ -57,13 +53,13 @@ function Favorites() {
           })
         }
       </div>
-      {(!favouriteProperties || favouriteProperties.length === 0) && (
+      {(!currentResidences || currentResidences.length === 0) && (
         <p>
-          You don&apos;t have any favorited properties
+          You don&apos;t have any Current Residences
         </p>
       )}
     </div>
   )
 }
 
-export default Favorites
+export default Residences
